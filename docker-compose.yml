@@ -1,0 +1,19 @@
+version: '3'
+services:
+  db:
+    container_name: postgresql
+    build: ./postgres
+
+    # マウントしたpostgresql.confファイルを読みこませる
+    # postgresql.conf では、カレントスキーマを public から hogeschema に変更している
+    # search_path = '"$user", hogeschema'
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+    ports:
+      - 15432:5432
+    env_file:
+      - db.env
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf
